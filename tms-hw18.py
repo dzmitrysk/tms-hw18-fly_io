@@ -3,6 +3,7 @@ from flask import Flask
 from flask import render_template
 from flask import request
 import os
+from shutil import copy
 
 app = Flask(__name__)
 
@@ -43,6 +44,14 @@ def add():
         db.add_item(table, name=name, price=price, count=count, comment=comment)
         return render_template('index.html', all_items=db.get_all_items(table))
     return render_template('add.html')
+
+
+@app.route('/restore/')
+def restore():
+    global db, database_path
+    database_origin = os.path.join(os.getcwd(), 'products_origin.db')
+    copy(database_origin, database_path)
+    return render_template('index.html', all_items=db.get_all_items(table))
 
 
 database_path = os.path.join(os.getcwd(), 'products.db')
